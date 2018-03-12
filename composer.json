@@ -12,7 +12,9 @@
       "email": "xrain@simcu.com"
     }
   ],
-  "psr-4": {
-    "Synapse\\": "src/"
+  "autoload": {
+    "psr-4": {
+      "Synapse\\": "synapse/"
+    }
   }
 }

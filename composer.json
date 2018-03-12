@@ -1,0 +1,15 @@
+{
+    "name": "simcu/synapse",
+    "description": "A rpc framework base RabbitMQ (已实现C#,python,Golang)",
+    "type": "library",
+    "require": {
+        "php-amqplib/php-amqplib": "^2.7"
+    },
+    "license": "BSD",
+    "authors": [
+        {
+            "name": "xRain",
+            "email": "xrain@simcu.com"
+        }
+    ]
+}

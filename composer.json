@@ -1,5 +1,5 @@
 {
-  "name": "synapse/siroen",
+  "name": "synapse-rpc/siroen",
   "description": "A rpc framework base RabbitMQ (已实现C#,python,Golang)",
   "type": "library",
   "require": {

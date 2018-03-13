@@ -7,7 +7,13 @@
  */
 
 namespace Synapse;
-class RpcServer
-{
 
+use Thread;
+
+class RpcServer extends Thread
+{
+    public function run()
+    {
+        print_r(1111111);
+    }
 }

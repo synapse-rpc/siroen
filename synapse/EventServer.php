@@ -7,7 +7,7 @@
  */
 
 namespace Synapse;
-class EventServer
+class EventServer extends Thread
 {
 
 }

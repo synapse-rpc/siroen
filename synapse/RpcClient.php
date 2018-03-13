@@ -8,7 +8,8 @@
 
 namespace Synapse;
 
-use Thread;
+use PhpAmqpLib\Message\AMQPMessage;
+use Exception;
 
 class RpcClient
 {
@@ -36,14 +37,17 @@ class RpcClient
     {
         $this->_checkAndCreateQueue();
         $callback = function ($msg) {
-            echo " [x] Received ", $msg->body, "\n";
+            $this->_response_cache[$msg->get_properties()['correlation_id']] = json_decode($msg->body, true);
+            $this->_channel->basic_ack($msg->delivery_info['delivery_tag']);
+            if ($this->_synapse->debug) {
+                Synapse::log(sprintf('RPC Response: (%s)%s@%s->%s %s', $msg->get_properties()['correlation_id'], $msg->get_properties()['type'], $msg->get_properties()['reply_to'], $this->_synapse->app_name, $msg->body), Synapse::LogDebug);
+            }
         };
-//        $this->_channel->basic_consume($this->_queue_name, '', false, true, false, false, $callback);
-        while (1) {
+        $this->_channel->basic_consume($this->_queue_name, '', false, false, false, false, $callback);
+        //其实这段是应该在另一个线程跑的
+//        while (count($this->_channel->callbacks)) {
 //            $this->_channel->wait();
-            print_r(1111);
-            sleep(1);
-        }
+//        }
     }
 
     public function send($app, $action, $param)
@@ -58,7 +62,26 @@ class RpcClient
         $body = new AMQPMessage(json_encode($param), $props);
         $this->_channel->basic_publish($body, $this->_synapse->sys_name, $router);
         if ($this->_synapse->debug) {
-            Synapse::log(sprintf("RPC Request: (%s)%s->%s@%s %s", $props['message_id'], $this->_synapse->app_name, $action, $app, json_encode($param)));
+            Synapse::log(sprintf("RPC Request: (%s)%s->%s@%s %s", $props['message_id'], $this->_synapse->app_name, $action, $app, json_encode($param)), Synapse::LogDebug);
         }
+        $res = [];
+        try {
+            pcntl_alarm($this->_synapse->rpc_timeout);
+            pcntl_signal(SIGALRM, function () {
+                throw new Exception;
+            });
+            $this->_channel->wait();
+            while (true) {
+                if (array_key_exists($props['message_id'], $this->_response_cache)) {
+                    $res = $this->_response_cache[$props['message_id']];
+                    unset($this->_response_cache[$props['message_id']]);
+                    break;
+                }
+            }
+            pcntl_alarm(0);
+        } catch (Exception $e) {
+            $res = ['rpc_error' => 'timeout'];
+        }
+        return $res;
     }
 }

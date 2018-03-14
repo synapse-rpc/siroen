@@ -6,7 +6,7 @@
  * Time: 06:34
  */
 
-namespace Synapse;
+namespace Rpc\Synapse\Siroen;
 
 use PhpAmqpLib\Message\AMQPMessage;
 use Exception;

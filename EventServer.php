@@ -6,7 +6,7 @@
  * Time: 06:33
  */
 
-namespace Synapse;
+namespace Rpc\Synapse\Siroen;
 class EventServer
 {
     private $_synapse;

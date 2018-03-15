@@ -31,7 +31,7 @@ class EventServer
         $this->_checkAndCreateQueue();
         $callback = function ($msg) {
             if ($this->_synapse->debug) {
-                Synapse::log(sprintf('Event Receive: %s@%s %s', $msg->get_properties()['type'], $msg->get_properties()['reply_to'], $msg->body));
+                Synapse::log(sprintf('Event Receive: %s@%s %s', $msg->get_properties()['type'], $msg->get_properties()['reply_to'], $msg->body), Synapse::LogDebug);
             }
             $event_name = sprintf('%s.%s', $msg->get_properties()['reply_to'], $msg->get_properties()['type']);
             if (array_key_exists($event_name, $this->_synapse->event_callback)) {

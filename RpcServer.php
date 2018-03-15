@@ -35,7 +35,7 @@ class RpcServer
         $this->_checkAndCreateQueue();
         $callback = function ($msg) {
             if ($this->_synapse->debug) {
-                Synapse::log(sprintf('Rpc Receive: (%s)%s->%s@%s %s', $msg->get_properties()['message_id'], $msg->get_properties()['reply_to'], $msg->get_properties()['type'], $this->_synapse->app_name, $msg->body));
+                Synapse::log(sprintf('Rpc Receive: (%s)%s->%s@%s %s', $msg->get_properties()['message_id'], $msg->get_properties()['reply_to'], $msg->get_properties()['type'], $this->_synapse->app_name, $msg->body), Synapse::LogDebug);
             }
             if (array_key_exists($msg->get_properties()['type'], $this->_synapse->rpc_callback)) {
                 $req = json_decode($msg->body, true);
@@ -54,7 +54,7 @@ class RpcServer
             $body = new AMQPMessage(json_encode($res), $props);
             $this->_synapse->channel->basic_publish($body, $this->_synapse->sys_name, $router);
             if ($this->_synapse->debug) {
-                Synapse::log(sprintf('Rpc Return: (%s)%s@%s->%s %s', $msg->get_properties()['message_id'], $msg->get_properties()['type'], $this->_synapse->app_name, $msg->get_properties()['reply_to'], json_encode($res)));
+                Synapse::log(sprintf('Rpc Return: (%s)%s@%s->%s %s', $msg->get_properties()['message_id'], $msg->get_properties()['type'], $this->_synapse->app_name, $msg->get_properties()['reply_to'], json_encode($res)), Synapse::LogDebug);
             }
         };
         $this->_synapse->channel->basic_consume($this->_queue_name, '', false, true, false, false, $callback);

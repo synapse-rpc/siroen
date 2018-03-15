@@ -33,7 +33,7 @@ class EventClient
         $body = new AMQPMessage(json_encode($param), $props);
         $this->_channel->basic_publish($body, $this->_synapse->sys_name, $router);
         if ($this->_synapse->debug) {
-            Synapse::log(sprintf("Event Publish: %s@%s %s", $event, $this->_synapse->app_name, json_encode($param)));
+            Synapse::log(sprintf("Event Publish: %s@%s %s", $event, $this->_synapse->app_name, json_encode($param)), Synapse::LogDebug);
         }
     }
 }

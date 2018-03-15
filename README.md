@@ -10,6 +10,9 @@
 #### 包地址
 > https://packagist.org/packages/synapse-rpc/siroen
 
+#### Demo测试地址
+> https://github.com/synapse-rpc/siroen-test
+
 #### 可以使用Nuget安装
 > composer require synapse-rpc/siroen
 
